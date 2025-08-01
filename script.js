@@ -1,6 +1,3 @@
-// This is the boilerplate code given for you
-// You can modify this code
-// Product data
 const products = [
   { id: 1, name: "Product 1", price: 10 },
   { id: 2, name: "Product 2", price: 20 },
@@ -9,29 +6,52 @@ const products = [
   { id: 5, name: "Product 5", price: 50 },
 ];
 
-// DOM elements
-const productList = document.getElementById("product-list");
+const productListEl = document.getElementById("product-list");
+const cartListEl = document.getElementById("cart-list");
+const clearCartBtn = document.getElementById("clear-cart-btn");
 
-// Render product list
+// Load cart from sessionStorage
+let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
+
+// Render the product list
 function renderProducts() {
-  products.forEach((product) => {
+  products.forEach(product => {
     const li = document.createElement("li");
-    li.innerHTML = `${product.name} - $${product.price} <button class="add-to-cart-btn" data-id="${product.id}">Add to Cart</button>`;
-    productList.appendChild(li);
+    li.textContent = `${product.name} - $${product.price}`;
+
+    const addBtn = document.createElement("button");
+    addBtn.textContent = "Add to Cart";
+    addBtn.addEventListener("click", () => addToCart(product));
+
+    li.appendChild(addBtn);
+    productListEl.appendChild(li);
   });
 }
 
-// Render cart list
-function renderCart() {}
+// Render the cart items
+function renderCart() {
+  cartListEl.innerHTML = ""; // Clear previous items
+
+  cart.forEach(item => {
+    const li = document.createElement("li");
+    li.textContent = `${item.name} - $${item.price}`;
+    cartListEl.appendChild(li);
+  });
+}
 
 // Add item to cart
-function addToCart(productId) {}
+function addToCart(product) {
+  cart.push(product);
+  sessionStorage.setItem("cart", JSON.stringify(cart));
+  renderCart();
+}
 
-// Remove item from cart
-function removeFromCart(productId) {}
-
-// Clear cart
-function clearCart() {}
+// Clear the cart
+clearCartBtn.addEventListener("click", () => {
+  cart = [];
+  sessionStorage.removeItem("cart");
+  renderCart();
+});
 
 // Initial render
 renderProducts();
